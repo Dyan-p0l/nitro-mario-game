@@ -468,6 +468,8 @@ function MarioGame() {
     }
   };
 
+
+
   this.checkElementPowerUpCollision = function(element) {
     for (var i = 0; i < powerUps.length; i++) {
       var collisionDirection = that.collisionCheck(powerUps[i], element);

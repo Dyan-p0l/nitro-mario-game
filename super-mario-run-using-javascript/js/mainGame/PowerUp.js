@@ -37,7 +37,7 @@ function PowerUp() {
 
   this.update = function() {
     if (that.type == 30) {
-      var gravity = 0.2;
+      var gravity = 0.17;
 
       if (that.grounded) {
         that.velY = 0;
