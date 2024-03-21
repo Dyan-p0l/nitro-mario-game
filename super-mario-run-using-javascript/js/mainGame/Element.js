@@ -64,6 +64,36 @@ function Element() {
     that.sX = 9 * that.width;
   };
 
+  this.water = function() {
+    that.type = 11;
+    that.sX = 11 * that.width;
+  };
+
+  this.marshplat = function() {
+    that.type = 12;
+    that.sX = 12 * that.width;
+  };
+
+  this.marshgrass = function() {
+    that.type = 13;
+    that.sX = 13 * that.width;
+  };
+
+  this.poop = function() {
+    that.type = 14;
+    that.sX = 14 * that.width;
+  };
+
+  this.boneleft = function() {
+    that.type = 15;
+    that.sX = 15 * that.width;
+  };
+
+  this.boneright = function() {
+    that.type = 16;
+    that.sX = 16 * that.width;
+  };
+
   this.draw = function() {
     gameUI.draw(element, that.sX, that.sY, that.width, that.height, that.x, that.y, that.width, that.height);
   };

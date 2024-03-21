@@ -93,6 +93,16 @@ function MarioGame() {
   that.bindKeyPress = function() {
     var canvas = gameUI.getCanvas(); //for use with touch events
 
+    // Add an event listener to capture key presses
+    document.addEventListener('keydown', function(event) {
+      // Check if the arrow keys are pressed
+      if (event.key.includes('Arrow')) {
+        // Prevent the default action of arrow keys (scrolling)
+        event.preventDefault();
+      }
+    });
+
+
     //key binding
     document.body.addEventListener('keydown', function(e) {
       keys[e.keyCode] = true;
@@ -185,6 +195,8 @@ function MarioGame() {
 
     that.renderMap();
 
+
+
     for (var i = 0; i < powerUps.length; i++) {
       powerUps[i].draw();
       powerUps[i].update();
@@ -214,8 +226,11 @@ function MarioGame() {
     gameUI.writeText('Nitrogen Cycle: Nitrogen cycle is a biogeochemical process', 30, 30);
     gameUI.writeText('which transforms inert atmospheric nitrogen to a usable form', 30, 60);
     gameUI.writeText('for plants, animals and other organisms.', 30, 90);
-};
+  };
 
+  this.displayWelcomeMessage = function(){
+    gameUI.displayPopUp("Welcome to the nitrogen cycle game!!");
+  };
 
   this.renderMap = function() {
     //setting false each time the map renders so that elements fall off a platform and not hover around
@@ -335,6 +350,68 @@ function MarioGame() {
             element.x = column * tileSize;
             element.y = row * tileSize;
             element.pipeTopRight();
+            element.draw();
+
+            that.checkElementMarioCollision(element, row, column);
+            that.checkElementPowerUpCollision(element);
+            that.checkElementEnemyCollision(element);
+            that.checkElementBulletCollision(element);
+            break;
+
+          case 11: //water
+            element.x = column * tileSize;
+            element.y = row * tileSize;
+            element.water();
+            element.draw();
+            break;
+
+          case 12: //marshplat
+            element.x = column * tileSize;
+            element.y = row * tileSize;
+            element.marshplat();
+            element.draw();
+
+            that.checkElementMarioCollision(element, row, column);
+            that.checkElementPowerUpCollision(element);
+            that.checkElementEnemyCollision(element);
+            that.checkElementBulletCollision(element);
+            break;
+          
+          case 13: //marshgrass
+            element.x = column * tileSize;
+            element.y = row * tileSize;
+            element.marshgrass();
+            element.draw();
+            break;
+          
+          case 14: //poop
+            element.x = column * tileSize;
+            element.y = row * tileSize;
+            element.poop();
+            element.draw();
+
+            that.checkElementMarioCollision(element, row, column);
+            that.checkElementPowerUpCollision(element);
+            that.checkElementEnemyCollision(element);
+            that.checkElementBulletCollision(element);
+            break;
+          
+          case 15: //boneleft
+            element.x = column * tileSize;
+            element.y = row * tileSize;
+            element.boneleft();
+            element.draw();
+
+            that.checkElementMarioCollision(element, row, column);
+            that.checkElementPowerUpCollision(element);
+            that.checkElementEnemyCollision(element);
+            that.checkElementBulletCollision(element);
+            break;
+
+          case 16: //boneright
+            element.x = column * tileSize;
+            element.y = row * tileSize;
+            element.boneright();
             element.draw();
 
             that.checkElementMarioCollision(element, row, column);
@@ -464,9 +541,26 @@ function MarioGame() {
 
         //sound when coin block is hit
         gameSound.play('coin');
+      } 
+    } 
+    
+    // Collision with poop element
+    if (collisionDirection=== 'l' || collisionDirection === 'r' || collisionDirection === 't') {
+      if(element.type === 14){
+        gameUI.displayPopUp("Fossilized Treasure: Dinosaur Dung!  Congratulations on discovering dinosaur dung scattered across the landscape! Did you know that animal waste, like this fossilized feces, plays a vital role in NITROGEN CYLE? As dung decomposes, it releases nutrients like nitrogen back into the soil, supporting plant growth and sustaining life in the ecosystem. Keep an eye out for more hidden treasures as you explore NitroSaur Adventure!");
       }
-    }
-  };
+      
+      else if(element.type === 15 || element.type === 16){
+        gameUI.displayPopUp("Exciting find! You have stumbled upon decaying organic matter, such as fallen trees or dinosaur bones. Did you know that decomposers break down organic NITROGEN compounds within this matter, releasing ammonia into the soil through ammonification? This process recycles nutrients and contributes to soil fertility. Keep exploring and collect valuable resources!");
+      }
+    } 
+    
+    // Collision with left bone element
+    
+
+    
+};
+
 
 
 
@@ -520,6 +614,7 @@ function MarioGame() {
         } else if (powerUps[i].type == 31) {
           //flower
           mario.type = 'fire';
+          gameUI.displayPopUp("Congratulations! You encountered a nitrogen-fixing plant. These special plants have the ability to convert atmospheric nitrogen into a usable form for other organisms through a process called nitrogen fixation. This essential process helps replenish soil nutrients and supports the growth of plants and animals in the ecosystem.");
         }
         powerUps.splice(i, 1);
 
@@ -556,7 +651,7 @@ function MarioGame() {
             mario.type = 'small';
             mario.invulnerable = true;
             collWithMario = undefined;
-
+            
             //sound when mario powerDowns
             gameSound.play('powerDown');
 
@@ -578,7 +673,7 @@ function MarioGame() {
           } else if (mario.type == 'small') {
             //kill mario if collision occurs when he is small
             that.pauseGame();
-
+            gameUI.displayPopUp("Warning! You've stumbled upon a decomposer. While decomposers play a vital role in breaking down dead organic matter, they can also pose a threat to unwary travelers in the game world. Interacting with the decaying organic matter may result in harmful effects, such as reduced health or impaired movement. Exercise caution and consider alternative routes to avoid encountering decomposers. Stay vigilant as you navigate the world.");
             mario.frame = 13;
             collWithMario = undefined;
 
@@ -644,6 +739,7 @@ function MarioGame() {
       score.lifeCount--;
       score.updateLifeCount();
 
+      gameUI.displayPopUp("Warning! The water appears polluted with ammonia, a nitrogen-based compound. Did you know that bacteria in the water can convert ammonia into nitrate through a process called nitrification? Unfortunately, excessive nitrate pollution can harm aquatic life and disrupt ecosystem balance. Be cautious and find a safe route!");
       timeOutId = setTimeout(function() {
         if (score.lifeCount == 0) {
           that.gameOver();
@@ -818,13 +914,28 @@ function MarioGame() {
         gameSound.play('stageClear');
 
         timeOutId = setTimeout(function() {
-          currentLevel++;
-          if (originalMaps[currentLevel]) {
-            that.init(originalMaps, currentLevel);
-            score.updateLevelNum(currentLevel);
-          } else {
-            that.gameOver();
-          }
+          if (currentLevel === 1) {
+            // Display congratulatory message for reaching Level 2
+
+            gameUI.displayPopUp("Congratulations on reaching level 2! You've stumbled upon a fascinating place, in the MARSHLAND! Here, anaerobic conditions in the soil support denitrifying bacteria, which convert nitrate into atmospheric nitrogen gas. This process, known as denitrification, helps regulate nitrogen levels and prevents nutrient runoff into water bodies. Keep exploring the marsh and uncover more secrets of the nitrogen cycle!");
+            // Add any additional actions for reaching Level 2 here
+            // Proceed to the next level if available
+            currentLevel++;
+            if (originalMaps[currentLevel]) {
+              that.init(originalMaps, currentLevel);
+              score.updateLevelNum(currentLevel);
+            } else {
+              that.gameOver();
+            }
+          } else{
+            currentLevel++;
+            if (originalMaps[currentLevel]) {
+              that.init(originalMaps, currentLevel);
+              score.updateLevelNum(currentLevel);
+            } else {
+              that.gameOver();
+            }
+          } 
         }, 5000);
       }
     }
